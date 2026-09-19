@@ -1,16 +1,25 @@
-# ppb
+# Tugas Praktikum PPB - Modul 3 (Flutter)
 
-A new Flutter project.
+Aplikasi eksplorasi data negara (*Country App*) berbasis Flutter yang mengambil data dari REST API.
 
-## Getting Started
+## Informasi Kelompok
+- **Kelompok:** 2
+- **Shift:** 1
 
-This project is a starting point for a Flutter application.
+### Anggota Kelompok:
+1. Ryan Gabriel Marsiamto (21120124120021)
+2. Raditya Gilang Daneshworo (21120124140116)
+3. Razzaq Permana (21120123120016)
+4. Bagus Ariiq Ambiya (21120124140151)
 
-A few resources to get you started if this is your first Flutter project:
+## Fitur Aplikasi
+- **List Countries:** Menampilkan daftar bendera, nama, dan region negara dari API.
+- **Detail Country:** Menampilkan rincian data populasi, ibu kota, bahasa, dan mata uang.
+- **Search Bar:** Menyaring data negara berdasarkan nama secara *real-time*.
+- **Favorite System:** Menambahkan dan menghapus negara favorit ke halaman khusus.
+- **Halaman Profil:** Menampilkan identitas seluruh anggota kelompok.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Cara Menjalankan Aplikasi
+1. Clone repositori ini:
+   ```bash
+   git clone <URL_REPOSITORY>
