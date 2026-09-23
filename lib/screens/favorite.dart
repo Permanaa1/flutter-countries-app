@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'detail.dart';
 
-// Variabel global penampung daftar negara favorit
-final List<Country> favoriteCountries = [];
-
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
 
   @override
-  State<FavoritePage> createState() => _FavoritePageState();
+  State createState() => _FavoritePageState();
 }
 
-class _FavoritePageState extends State<FavoritePage> {
+class _FavoritePageState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +22,7 @@ class _FavoritePageState extends State<FavoritePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border, size: 72, color: Colors.grey),
+            Icon(Icons.favorite_border, size: 70, color: Colors.grey),
             SizedBox(height: 12),
             Text(
               'Belum ada negara favorit',
@@ -53,13 +50,13 @@ class _FavoritePageState extends State<FavoritePage> {
               )
                   : const SizedBox(width: 50),
               title: Text(country.name),
-              subtitle: Text(country.region),
+              subtitle: Text('Benua: ${country.region}'),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 tooltip: 'Hapus dari favorit',
                 onPressed: () {
                   setState(() {
-                    favoriteCountries.remove(country);
+                    favoriteCountries.removeAt(i);
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

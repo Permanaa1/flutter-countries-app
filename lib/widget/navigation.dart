@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../screens/home.dart';
 import '../screens/favorite.dart';
+import '../screens/history.dart';
 import '../screens/profile.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
 
   @override
-  State<NavigationPage> createState() => _NavigationPageState();
+  State createState() => _NavigationPageState();
 }
 
-class _NavigationPageState extends State<NavigationPage> {
+class _NavigationPageState extends State {
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
@@ -21,9 +22,10 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
+    final pages = [
       const HomePage(),
       const FavoritePage(),
+      const HistoryPage(),
       ProfilePage(onHomeTap: () => _onTabTapped(0)),
     ];
 
@@ -32,18 +34,24 @@ class _NavigationPageState extends State<NavigationPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
+        type: BottomNavigationBarType.fixed, // Wajib untuk 4 tab
         selectedItemColor: const Color.fromARGB(255, 13, 105, 225),
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.public),
+            label: 'Countries',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorit',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.history),
+            label: 'Riwayat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
             label: 'Profile',
           ),
         ],

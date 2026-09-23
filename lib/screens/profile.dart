@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   final VoidCallback? onHomeTap;
   const ProfilePage({super.key, this.onHomeTap});
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  final List<Map<String, String>> teamMembers = [
+  // Data Anggota Kelompok 2 (Shift 1)
+  final teamMembers = const [
     {
       'Nama': 'Ryan Gabriel Marsiamto',
       'NIM': '21120124120021',
+      'Foto': 'https://picsum.photos/seed/ryan/300/300',
     },
     {
       'Nama': 'Raditya Gilang Daneshworo',
       'NIM': '21120124140116',
+      'Foto': 'https://picsum.photos/seed/raditya/300/300',
     },
     {
       'Nama': 'Razzaq Permana',
       'NIM': '21120123120016',
+      'Foto': 'https://picsum.photos/seed/razzaq/300/300',
     },
     {
       'Nama': 'Bagus Ariiq Ambiya',
       'NIM': '21120124140151',
+      'Foto': 'https://picsum.photos/seed/bagus/300/300',
     },
   ];
 
@@ -32,111 +32,127 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Kelompok 2'),
+        title: const Text('Profil Kelompok 2'),
         backgroundColor: const Color.fromARGB(255, 13, 105, 225),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
-            onPressed: widget.onHomeTap,
+            onPressed: onHomeTap,
           ),
         ],
       ),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned.fill(
-            child: FractionallySizedBox(
-              alignment: Alignment.topCenter,
-              heightFactor: 0.45,
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    image: NetworkImage(
-                      'https://picsum.photos/1200/800',
-                    ),
-                  ),
-                ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. Wadah Foto Bersama Kelompok
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              clipBehavior: Clip.antiAlias,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 100.0,
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3.0),
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                          'https://api.dicebear.com/7.x/bottts/png?seed=Kelompok2',
-                        ),
+                  Image.network(
+                    'https://picsum.photos/seed/kelompok2shift1/800/400',
+                    height: 190,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 190,
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: Icon(Icons.groups, size: 64, color: Colors.grey),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12.0),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 6.0),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade900.withValues(alpha: 0.8),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    width: double.infinity,
+                    color: const Color.fromARGB(255, 13, 105, 225),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: const Text(
-                      'Shift 1 - Kelompok 2',
+                      'FOTO BERSAMA KELOMPOK 2 — SHIFT 1',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Card(
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Column(
-                        children: [
-                          for (var member in teamMembers) ...[
-                            ListTile(
-                              leading: const CircleAvatar(
-                                backgroundColor: Color.fromARGB(255, 13, 105, 225),
-                                child: Icon(Icons.person, color: Colors.white),
-                              ),
-                              title: Text(
-                                member['Nama'] ?? 'No Name',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15.0,
-                                ),
-                              ),
-                              subtitle: Text(
-                                member['NIM'] ?? 'No NIM',
-                                style: TextStyle(color: Colors.grey.shade700),
-                              ),
-                            ),
-                            if (member != teamMembers.last)
-                              const Divider(height: 1, indent: 16, endIndent: 16),
-                          ],
-                        ],
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24.0),
+
+            // Judul Bagian Anggota
+            const Text(
+              'Daftar Anggota Kelompok',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12.0),
+
+            // 2. Grid Foto & Identitas Masing-Masing Anggota
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: teamMembers.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+                childAspectRatio: 0.80,
+              ),
+              itemBuilder: (context, index) {
+                final member = teamMembers[index];
+                return Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 36,
+                          backgroundColor: Colors.grey.shade200,
+                          backgroundImage: NetworkImage(member['Foto']!),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Text(
+                          member['Nama'] ?? 'No Name',
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.0,
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        Text(
+                          member['NIM'] ?? 'No NIM',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

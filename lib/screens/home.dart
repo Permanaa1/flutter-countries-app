@@ -2,19 +2,23 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'detail.dart';
-import 'favorite.dart';
+
+// Variabel data bersama (Global State)
+final List favoriteCountries = [];
+final List historyCountries = [];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late Future<List<Country>> countries;
+class _HomePageState extends State {
+  late dynamic countries;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String _sortBy = 'name'; // Opsi: 'name' atau 'region'
 
   @override
   void initState() {
@@ -28,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<List<Country>> fetchCountries() async {
+  Future fetchCountries() async {
     final uri = Uri.parse('https://www.apicountries.com/countries');
     final response = await http.get(uri);
 
@@ -43,70 +47,125 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Countries')),
+      appBar: AppBar(
+        title: const Text('Countries'),
+        backgroundColor: const Color.fromARGB(255, 13, 105, 225),
+      ),
       body: Column(
         children: [
+          // Search Bar & Dropdown Sorting Benua
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari negara...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {
-                      _searchQuery = '';
-                    });
-                  },
-                )
-                    : null,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: 16,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Cari negara...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                          : null,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 0,
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      value: _sortBy,
+                      icon: const Icon(Icons.sort),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'name',
+                          child: Text('Nama'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'region',
+                          child: Text('Benua'),
+                        ),
+                      ],
+                      onChanged: (dynamic value) {
+                        if (value != null) {
+                          setState(() {
+                            _sortBy = value;
+                          });
+                        }
+                      },
+                    ),
+                  ),
                 ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
+              ],
             ),
           ),
+
+          // Daftar Negara
           Expanded(
-            child: FutureBuilder<List<Country>>(
+            child: FutureBuilder(
               future: countries,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
                   return const Center(child: Text('No countries found'));
                 }
 
-                final filteredList = snapshot.data!.where((country) {
+                final List rawList = snapshot.data as List;
+                List listData = rawList.where((country) {
                   return country.name
+                      .toString()
                       .toLowerCase()
                       .contains(_searchQuery.toLowerCase());
                 }).toList();
 
-                if (filteredList.isEmpty) {
+                if (_sortBy == 'region') {
+                  listData.sort((a, b) {
+                    int compareRegion = a.region.toString().compareTo(b.region.toString());
+                    if (compareRegion != 0) return compareRegion;
+                    return a.name.toString().compareTo(b.name.toString());
+                  });
+                } else {
+                  listData.sort((a, b) => a.name.toString().compareTo(b.name.toString()));
+                }
+
+                if (listData.isEmpty) {
                   return const Center(
                     child: Text('Negara tidak ditemukan'),
                   );
                 }
 
                 return ListView.builder(
-                  itemCount: filteredList.length,
+                  itemCount: listData.length,
                   itemBuilder: (context, i) {
-                    final country = filteredList[i];
+                    final country = listData[i];
                     final bool isFav = favoriteCountries.any(
                           (c) => c.name == country.name,
                     );
@@ -125,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                         )
                             : const SizedBox(width: 50),
                         title: Text(country.name),
-                        subtitle: Text(country.region),
+                        subtitle: Text('Benua: ${country.region}'),
                         trailing: IconButton(
                           icon: Icon(
                             isFav ? Icons.favorite : Icons.favorite_border,
@@ -154,6 +213,10 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         onTap: () {
+                          // Catat ke Riwayat secara unik (paling baru di posisi teratas)
+                          historyCountries.removeWhere((c) => c.name == country.name);
+                          historyCountries.insert(0, country);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -180,8 +243,8 @@ class Country {
   final String? capital;
   final int population;
   final String? flagsPng;
-  final List<dynamic>? languages;
-  final List<dynamic>? currencies;
+  final List? languages;
+  final List? currencies;
 
   Country({
     required this.name,
@@ -193,15 +256,15 @@ class Country {
     this.currencies,
   });
 
-  factory Country.fromJson(Map<String, dynamic> json) {
-    List<dynamic>? langs;
+  factory Country.fromJson(Map json) {
+    List? langs;
     if (json['languages'] != null) {
       langs = (json['languages'] as List)
           .map((l) => l['name'].toString())
           .toList();
     }
 
-    List<dynamic>? cur;
+    List? cur;
     if (json['currencies'] != null) {
       cur = (json['currencies'] as List)
           .map((c) => c['name'].toString())
