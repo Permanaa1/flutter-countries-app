@@ -22,4 +22,8 @@ Aplikasi eksplorasi data negara (*Country App*) berbasis Flutter yang mengambil 
 ## Cara Menjalankan Aplikasi
 1. Clone repositori ini:
    ```bash
+<<<<<<< HEAD
    git clone <URL_REPOSITORY>
+=======
+   git clone <URL_REPOSITORY>
+>>>>>>> e2d88b8c47febafd1374bf8878f4f41033713982
